@@ -1,90 +1,99 @@
-# Welcome to GitHub
+# Steady — a speaking-confidence & fluency companion
 
-Welcome to GitHub—where millions of developers work together on software. Ready to get started? Let’s learn how this all works by building and publishing your first GitHub Pages website!
+> _Speak with less struggle, more openness._
 
-## Repositories
+**Steady** turns a personal speaking-confidence & fluency plan into a gentle, interactive daily
+companion. It’s built for someone working through a stutter and the social anxiety layered on top of it —
+the goal isn’t “zero stuttering,” it’s **easy speaking**: less fear, less hiding, more openness, watched as
+a trend over weeks rather than judged day to day.
 
-Right now, we’re in your first GitHub **repository**. A repository is like a folder or storage space for your project. Your project's repository contains all its files such as code, documentation, images, and more. It also tracks every change that you—or your collaborators—make to each file, so you can always go back to previous versions of your project if you make any mistakes.
+It’s a React + TypeScript single-page app, backed by **Supabase** (Postgres + Auth) with strict
+per-user row-level security, and it deploys automatically to **GitHub Pages**.
 
-This repository contains three important files: The HTML code for your first website on GitHub, the CSS stylesheet that decorates your website with colors and fonts, and the **README** file. It also contains an image folder, with one image file.
+---
 
-## Describe your project
+## What it does
 
-You are currently viewing your project's **README** file. **_README_** files are like cover pages or elevator pitches for your project. They are written in plain text or [Markdown language](https://guides.github.com/features/mastering-markdown/), and usually include a paragraph describing the project, directions on how to use it, who authored it, and more.
+| Area | What you can do |
+|---|---|
+| **Home** | A daily greeting, a rotating encouragement, today’s routine progress, a one-tap “I said it anyway” win button, and quick links into every tool. |
+| **Daily routine** | Work the Morning → Practice → Evening routine as a friendly checklist, with guidance for each step, a built-in **voice-memo recorder** for your daily “real rep,” and a link straight to tonight’s reflection. |
+| **Calm tools** | An **animated guided-breathing** orb (extended-exhale, physiological sigh, box breathing) with optional before/after anxiety logging, interactive **5-4-3-2-1 grounding**, in-the-moment block recovery, and the fluency toolkit. |
+| **Exposure ladder** | All 12 levels with goals and “ready to move up when…” cues. Log attempts with before/after anxiety, mark how it went, and move up or step back at your own pace. |
+| **Word-swap lever** | Your single biggest lever. One tap to record “I said it anyway” (a win) vs. “I swapped,” with optional word/situation, today’s tally, and a 14-day view. |
+| **Reframe (CBT)** | Flip-card belief reframes, plus a thought-record builder (situation → automatic thought → thinking trap → a truer thought) that saves your growing evidence file. |
+| **Journal** | A structured nightly reflection — one win, one hard moment + how you responded, one thing to try tomorrow, and an optional anxiety rating — plus a timeline of past entries. |
+| **Progress** | Trend charts for anxiety, the word-swap ratio, and routine adherence, summary stats, and the full **weekly review** (auto-suggesting your swap count and routine days from your logs). |
+| **My plan** | Your personalized notes, the four principles, an editable self-assessment, and guidance on when to bring in a professional. |
 
-[Learn more about READMEs](https://help.github.com/en/articles/about-readmes)
+Every tracked value is **private to you** — Postgres row-level security restricts every row to its owner,
+so no other account can read your reflections.
 
-## Your first website
+---
 
-**GitHub Pages** is a free and easy way to create a website using the code that lives in your GitHub repositories. You can use GitHub Pages to build a portfolio of your work, create a personal website, or share a fun project that you coded with the world. GitHub Pages is automatically enabled in this repository, but when you create new repositories in the future, the steps to launch a GitHub Pages website will be slightly different.
+## Tech stack
 
-[Learn more about GitHub Pages](https://pages.github.com/)
+- **Vite + React 18 + TypeScript**
+- **Tailwind CSS** for styling (calm sage/teal + warm amber palette)
+- **Recharts** for trend charts (lazy-loaded so the first paint stays light)
+- **lucide-react** icons
+- **Supabase** — Postgres database + email/password Auth, accessed client-side with a publishable key
+  protected by RLS
 
-## Rename this repository to publish your site
+### Data model (Supabase)
 
-We've already set-up a GitHub Pages website for you, based on your personal username. This repository is called `hello-world`, but you'll rename it to: `username.github.io`, to match your website's URL address. If the first part of the repository doesn’t exactly match your username, it won’t work, so make sure to get it right.
+All tables are prefixed `sc_` and have RLS enabled with per-user policies
+(`auth.uid() = user_id`):
 
-Let's get started! To update this repository’s name, click the `Settings` tab on this page. This will take you to your repository’s settings page. 
+`sc_profiles`, `sc_self_assessment`, `sc_routine_days`, `sc_journal_entries`,
+`sc_ladder_attempts`, `sc_swap_events`, `sc_breathing_sessions`, `sc_thought_records`,
+`sc_weekly_reviews`.
 
-![repo-settings-image](https://user-images.githubusercontent.com/18093541/63130482-99e6ad80-bf88-11e9-99a1-d3cf1660b47e.png)
+---
 
-Under the **Repository Name** heading, type: `username.github.io`, where username is your username on GitHub. Then click **Rename**—and that’s it. When you’re done, click your repository name or browser’s back button to return to this page.
+## Run it locally
 
-<img width="1039" alt="rename_screenshot" src="https://user-images.githubusercontent.com/18093541/63129466-956cc580-bf85-11e9-92d8-b028dd483fa5.png">
-
-Once you click **Rename**, your website will automatically be published at: https://your-username.github.io/. The HTML file—called `index.html`—is rendered as the home page and you'll be making changes to this file in the next step.
-
-Congratulations! You just launched your first GitHub Pages website. It's now live to share with the entire world
-
-## Making your first edit
-
-When you make any change to any file in your project, you’re making a **commit**. If you fix a typo, update a filename, or edit your code, you can add it to GitHub as a commit. Your commits represent your project’s entire history—and they’re all saved in your project’s repository.
-
-With each commit, you have the opportunity to write a **commit message**, a short, meaningful comment describing the change you’re making to a file. So you always know exactly what changed, no matter when you return to a commit.
-
-## Practice: Customize your first GitHub website by writing HTML code
-
-Want to edit the site you just published? Let’s practice commits by introducing yourself in your `index.html` file. Don’t worry about getting it right the first time—you can always build on your introduction later.
-
-Let’s start with this template:
-
-```
-<p>Hello World! I’m [username]. This is my website!</p>
-```
-
-To add your introduction, copy our template and click the edit pencil icon at the top right hand corner of the `index.html` file.
-
-<img width="997" alt="edit-this-file" src="https://user-images.githubusercontent.com/18093541/63131820-0794d880-bf8d-11e9-8b3d-c096355e9389.png">
-
-
-Delete this placeholder line:
-
-```
-<p>Welcome to your first GitHub Pages website!</p>
+```bash
+npm install
+npm run dev      # http://localhost:5173
 ```
 
-Then, paste the template to line 15 and fill in the blanks.
+Other scripts:
 
-<img width="1032" alt="edit-githuboctocat-index" src="https://user-images.githubusercontent.com/18093541/63132339-c3a2d300-bf8e-11e9-8222-59c2702f6c42.png">
+```bash
+npm run build    # type-check + production build into dist/
+npm run preview  # serve the production build locally
+```
 
+The Supabase connection lives in `src/lib/supabaseConfig.ts`. The key there is a **publishable**
+(anon) key — it’s designed to be shipped in client code, and all access is gated by row-level
+security, so committing it is safe.
 
-When you’re done, scroll down to the `Commit changes` section near the bottom of the edit page. Add a short message explaining your change, like "Add my introduction", then click `Commit changes`.
+---
 
+## Deployment (GitHub Pages)
 
-<img width="1030" alt="add-my-username" src="https://user-images.githubusercontent.com/18093541/63131801-efbd5480-bf8c-11e9-9806-89273f027d16.png">
+A GitHub Actions workflow (`.github/workflows/deploy.yml`) builds the app and publishes it on every
+push to the default branch.
 
-Once you click `Commit changes`, your changes will automatically be published on your GitHub Pages website. Refresh the page to see your new changes live in action.
+**One-time setup:** in the repository, go to **Settings → Pages → Build and deployment** and set the
+**Source** to **GitHub Actions**. After the next push to the default branch (or a manual
+“Run workflow”), the app goes live at:
 
-:tada: You just made your first commit! :tada:
+```
+https://<your-username>.github.io/hello-world/
+```
 
-## Extra Credit: Keep on building!
+The Vite `base` is set to `/hello-world/` to match the repository name (see `vite.config.ts`). If you
+rename the repo, update that base path.
 
-Change the placeholder Octocat gif on your GitHub Pages website by [creating your own personal Octocat emoji](https://myoctocat.com/build-your-octocat/) or [choose a different Octocat gif from our logo library here](https://octodex.github.com/). Add that image to line 12 of your `index.html` file, in place of the `<img src=` link.
+> If email confirmation is enabled on your Supabase project, creating an account sends a confirmation
+> link to your inbox; click it, then return and sign in.
 
-Want to add even more code and fun styles to your GitHub Pages website? [Follow these instructions](https://github.com/github/personal-website) to build a fully-fledged static website.
+---
 
-![octocat](./images/create-octocat.png)
+## A note
 
-## Everything you need to know about GitHub
-
-Getting started is the hardest part. If there’s anything you’d like to know as you get started with GitHub, try searching [GitHub Help](https://help.github.com). Our documentation has tutorials on everything from changing your repository settings to configuring GitHub from your command line.
+Steady is a self-help companion, not a substitute for a speech-language pathologist who specializes in
+stuttering, or a trauma-informed therapist. Both are high-leverage support, and seeking them is a sign of
+seriousness, not weakness.
