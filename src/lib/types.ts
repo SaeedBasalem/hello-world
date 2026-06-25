@@ -5,6 +5,9 @@ export interface Profile {
   display_name: string | null
   current_level: number
   onboarded: boolean
+  xp: number
+  streak_count: number
+  last_active_date: string | null
   created_at: string
   updated_at: string
 }
@@ -112,4 +115,13 @@ export interface WeeklyReview {
   adjust: string | null
   created_at: string
   updated_at: string
+}
+
+export interface ChallengeCompletion {
+  id: string
+  user_id: string
+  challenge_key: string
+  day: string
+  xp_earned: number
+  created_at: string
 }

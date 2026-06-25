@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // Calm, warm palette: teal/sage for steadiness, amber for encouragement.
         brand: {
-          50: '#f0fdfa',
+          50:  '#f0fdfa',
           100: '#ccfbf1',
           200: '#99f6e4',
           300: '#5eead4',
@@ -18,7 +18,7 @@ export default {
           900: '#134e4a',
         },
         warm: {
-          50: '#fffbeb',
+          50:  '#fffbeb',
           100: '#fef3c7',
           200: '#fde68a',
           300: '#fcd34d',
@@ -28,8 +28,8 @@ export default {
         },
         ink: {
           DEFAULT: '#1f2937',
-          soft: '#475569',
-          faint: '#94a3b8',
+          soft:    '#475569',
+          faint:   '#94a3b8',
         },
       },
       fontFamily: {
@@ -37,18 +37,33 @@ export default {
       },
       keyframes: {
         'fade-in': {
-          '0%': { opacity: '0', transform: 'translateY(6px)' },
+          '0%':   { opacity: '0', transform: 'translateY(6px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         'pop': {
-          '0%': { transform: 'scale(0.8)', opacity: '0' },
-          '60%': { transform: 'scale(1.05)' },
+          '0%':   { transform: 'scale(0.8)', opacity: '0' },
+          '60%':  { transform: 'scale(1.05)' },
           '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        'slide-up': {
+          '0%':   { opacity: '0', transform: 'translateY(12px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'xp-float': {
+          '0%':   { opacity: '1', transform: 'translateY(0)' },
+          '100%': { opacity: '0', transform: 'translateY(-28px)' },
+        },
+        'pulse-glow': {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(20,184,166,0)' },
+          '50%':      { boxShadow: '0 0 0 8px rgba(20,184,166,0.2)' },
         },
       },
       animation: {
-        'fade-in': 'fade-in 0.4s ease-out',
-        'pop': 'pop 0.35s ease-out',
+        'fade-in':    'fade-in 0.4s ease-out',
+        'pop':        'pop 0.35s ease-out',
+        'slide-up':   'slide-up 0.45s ease-out',
+        'xp-float':   'xp-float 1.4s ease-out forwards',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
       },
     },
   },
