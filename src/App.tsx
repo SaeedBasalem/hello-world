@@ -2,6 +2,7 @@ import { lazy, Suspense, useState } from 'react'
 import {
   Home, CalendarCheck, Wind, TrendingUp, Repeat, Brain, NotebookPen,
   BarChart3, Compass, LogOut, Sparkles, Target, Sun, Moon, Flame, Zap,
+  Dumbbell, Activity, Bot,
 } from 'lucide-react'
 import { useAuth } from './context/AuthContext'
 import { ProfileProvider, useProfile } from './context/ProfileContext'
@@ -14,20 +15,26 @@ import { getXpLevel, getXpProgress } from './lib/xp'
 import AuthScreen from './components/AuthScreen'
 import Onboarding from './features/Onboarding'
 
-const Dashboard    = lazy(() => import('./features/Dashboard'))
-const Challenges   = lazy(() => import('./features/Challenges'))
-const DailyRoutine = lazy(() => import('./features/DailyRoutine'))
-const Calm         = lazy(() => import('./features/Calm'))
-const Ladder       = lazy(() => import('./features/Ladder'))
-const SwapTracker  = lazy(() => import('./features/SwapTracker'))
-const Reframe      = lazy(() => import('./features/Reframe'))
-const Journal      = lazy(() => import('./features/Journal'))
-const Progress     = lazy(() => import('./features/Progress'))
+const Dashboard     = lazy(() => import('./features/Dashboard'))
+const Challenges    = lazy(() => import('./features/Challenges'))
+const Practice      = lazy(() => import('./features/Practice'))
+const SpeechTracker = lazy(() => import('./features/SpeechTracker'))
+const AICoach       = lazy(() => import('./features/AICoach'))
+const DailyRoutine  = lazy(() => import('./features/DailyRoutine'))
+const Calm          = lazy(() => import('./features/Calm'))
+const Ladder        = lazy(() => import('./features/Ladder'))
+const SwapTracker   = lazy(() => import('./features/SwapTracker'))
+const Reframe       = lazy(() => import('./features/Reframe'))
+const Journal       = lazy(() => import('./features/Journal'))
+const Progress      = lazy(() => import('./features/Progress'))
 const PlanReference = lazy(() => import('./features/PlanReference'))
 
 const ICONS: Record<View, React.ComponentType<{ className?: string }>> = {
   dashboard:  Home,
   challenges: Target,
+  practice:   Dumbbell,
+  tracker:    Activity,
+  coach:      Bot,
   routine:    CalendarCheck,
   calm:       Wind,
   ladder:     TrendingUp,
@@ -88,6 +95,9 @@ function Shell() {
     switch (view) {
       case 'dashboard':  return <Dashboard onNavigate={go} />
       case 'challenges': return <Challenges />
+      case 'practice':   return <Practice />
+      case 'tracker':    return <SpeechTracker />
+      case 'coach':      return <AICoach />
       case 'routine':    return <DailyRoutine onNavigate={go} />
       case 'calm':       return <Calm />
       case 'ladder':     return <Ladder />
