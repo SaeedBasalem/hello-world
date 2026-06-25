@@ -45,19 +45,19 @@ export default function AuthScreen() {
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-brand-50 via-[#f6f8f8] to-[#f6f8f8]">
+    <div className="min-h-full bg-gradient-to-b from-brand-50 via-[#f6f8f8] to-[#f6f8f8] dark:from-slate-900 dark:via-[#0f172a] dark:to-[#0f172a]">
       <div className="mx-auto grid min-h-screen max-w-5xl items-center gap-10 px-5 py-10 lg:grid-cols-2 lg:gap-16">
         {/* Left: welcome / story */}
         <div className="animate-fade-in">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-brand-700 shadow-sm ring-1 ring-brand-100">
             <Sparkles className="h-4 w-4" /> {APP_NAME}
           </div>
-          <h1 className="text-3xl font-extrabold leading-tight text-ink sm:text-4xl">
+          <h1 className="text-3xl font-extrabold leading-tight text-ink dark:text-slate-100 sm:text-4xl">
             Speak with less struggle,
             <br />
             <span className="text-brand-600">more openness.</span>
           </h1>
-          <p className="mt-4 max-w-md text-ink-soft">
+          <p className="mt-4 max-w-md text-ink-soft dark:text-slate-400">
             A gentle, private companion built from your speaking-confidence plan. It turns the plan into a
             daily practice you can actually keep — breathing tools you can do in 90 seconds, a step-by-step
             exposure ladder, your word-swap lever, and a place to watch your progress trend upward.

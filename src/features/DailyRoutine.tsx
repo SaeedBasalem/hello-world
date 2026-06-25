@@ -49,16 +49,16 @@ export default function DailyRoutine({ onNavigate }: { onNavigate: (v: View) => 
       <Card>
         <div className="flex items-center gap-4">
           <ProgressRing value={pct} size={64}>
-            <span className="text-sm font-bold text-ink">
+            <span className="text-sm font-bold text-ink dark:text-slate-100">
               {done}/{ROUTINE_TASKS.length}
             </span>
           </ProgressRing>
           <div>
-            <h1 className="text-xl font-extrabold text-ink">Today’s routine</h1>
-            <p className="text-sm text-ink-soft">{prettyDateLong(day)}</p>
+            <h1 className="text-xl font-extrabold text-ink dark:text-slate-100">Today’s routine</h1>
+            <p className="text-sm text-ink-soft dark:text-slate-400">{prettyDateLong(day)}</p>
           </div>
         </div>
-        <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-800">
+        <p className="mt-4 rounded-xl bg-brand-50 dark:bg-brand-900/30 px-4 py-3 text-sm text-brand-800 dark:text-brand-300">
           {done === ROUTINE_TASKS.length
             ? 'Every piece done today. That’s a promise kept to yourself — exactly how self-trust is built.'
             : 'Tiny and repeated beats big and rare. Even one piece today keeps the line moving.'}
@@ -76,23 +76,23 @@ export default function DailyRoutine({ onNavigate }: { onNavigate: (v: View) => 
                 const checked = row[t.key]
                 const isOpen = open === t.key
                 return (
-                  <div key={t.key} className="rounded-xl border border-slate-100">
+                  <div key={t.key} className="rounded-xl border border-slate-100 dark:border-slate-700">
                     <div className="flex items-start gap-3 p-3">
                       <button
                         onClick={() => toggle(t.key)}
                         aria-label={`Mark ${t.title} ${checked ? 'incomplete' : 'complete'}`}
                         className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition ${
-                          checked ? 'border-brand-600 bg-brand-600 text-white' : 'border-slate-300 hover:border-brand-400'
+                          checked ? 'border-brand-600 bg-brand-600 text-white' : 'border-slate-300 dark:border-slate-600 hover:border-brand-400'
                         }`}
                       >
                         {checked && <Check className="h-4 w-4" />}
                       </button>
                       <button onClick={() => setOpen(isOpen ? null : t.key)} className="flex-1 text-left">
                         <div className="flex items-center justify-between gap-2">
-                          <span className={`font-semibold ${checked ? 'text-ink-faint line-through' : 'text-ink'}`}>
+                          <span className={`font-semibold ${checked ? 'text-ink-faint dark:text-slate-500 line-through' : 'text-ink dark:text-slate-100'}`}>
                             {t.title}
                           </span>
-                          <span className="flex items-center gap-2 text-xs text-ink-faint">
+                          <span className="flex items-center gap-2 text-xs text-ink-faint dark:text-slate-500">
                             {t.minutes}
                             <ChevronDown className={`h-4 w-4 transition ${isOpen ? 'rotate-180' : ''}`} />
                           </span>
@@ -101,9 +101,9 @@ export default function DailyRoutine({ onNavigate }: { onNavigate: (v: View) => 
                     </div>
 
                     {isOpen && (
-                      <div className="animate-fade-in border-t border-slate-100 px-3 pb-3 pt-3 text-sm">
-                        <p className="text-ink-soft">{t.how}</p>
-                        <p className="mt-2 text-xs italic text-ink-faint">Why: {t.why}</p>
+                      <div className="animate-fade-in border-t border-slate-100 dark:border-slate-700 px-3 pb-3 pt-3 text-sm">
+                        <p className="text-ink-soft dark:text-slate-400">{t.how}</p>
+                        <p className="mt-2 text-xs italic text-ink-faint dark:text-slate-500">Why: {t.why}</p>
 
                         {t.key === 'morning_prime' && (
                           <button className="btn-soft mt-3" onClick={() => onNavigate('calm')}>

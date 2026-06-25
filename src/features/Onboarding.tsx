@@ -41,21 +41,21 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-brand-50 to-[#f6f8f8] px-5 py-10">
+    <div className="min-h-full bg-gradient-to-b from-brand-50 to-[#f6f8f8] dark:from-slate-900 dark:to-[#0f172a] px-5 py-10">
       <div className="mx-auto max-w-2xl">
         {step === 0 && (
           <div className="card animate-fade-in p-7 sm:p-9">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-sm font-semibold text-brand-700">
               <Sparkles className="h-4 w-4" /> Welcome to {APP_NAME}
             </div>
-            <h1 className="text-2xl font-extrabold text-ink">Let’s set this up to fit you.</h1>
-            <p className="mt-2 text-ink-soft">
+            <h1 className="text-2xl font-extrabold text-ink dark:text-slate-100">Let’s set this up to fit you.</h1>
+            <p className="mt-2 text-ink-soft dark:text-slate-400">
               This is your private space. Before we dive in, four ideas sit underneath everything here —
               they matter more than any single exercise.
             </p>
             <ul className="mt-5 space-y-3">
               {PRINCIPLES.map((p, i) => (
-                <li key={p.title} className="flex gap-3 rounded-xl bg-slate-50 p-3">
+                <li key={p.title} className="flex gap-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 p-3">
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white">
                     {i + 1}
                   </span>
@@ -84,8 +84,8 @@ export default function Onboarding() {
 
         {step === 1 && (
           <div className="card animate-fade-in p-7 sm:p-9">
-            <h1 className="text-2xl font-extrabold text-ink">A quick self-assessment</h1>
-            <p className="mt-2 text-ink-soft">
+            <h1 className="text-2xl font-extrabold text-ink dark:text-slate-100">A quick self-assessment</h1>
+            <p className="mt-2 text-ink-soft dark:text-slate-400">
               Knowing your specific pattern makes every other part sharper. There are no wrong answers, and
               you can edit or skip any of this later under <span className="font-medium">My plan</span>.
             </p>

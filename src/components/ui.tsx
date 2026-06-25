@@ -26,13 +26,13 @@ export function SectionTitle({
     <div className="mb-4 flex items-start justify-between gap-3">
       <div className="flex items-start gap-3">
         {icon && (
-          <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+          <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400">
             {icon}
           </div>
         )}
         <div>
-          <h2 className="text-lg font-bold text-ink">{title}</h2>
-          {subtitle && <p className="mt-0.5 text-sm text-ink-soft">{subtitle}</p>}
+          <h2 className="text-lg font-bold text-ink dark:text-slate-100">{title}</h2>
+          {subtitle && <p className="mt-0.5 text-sm text-ink-soft dark:text-slate-400">{subtitle}</p>}
         </div>
       </div>
       {right}
@@ -42,7 +42,7 @@ export function SectionTitle({
 
 export function Spinner({ label }: { label?: string }) {
   return (
-    <div className="flex items-center justify-center gap-2 py-10 text-ink-faint">
+    <div className="flex items-center justify-center gap-2 py-10 text-ink-faint dark:text-slate-500">
       <Loader2 className="h-5 w-5 animate-spin" />
       {label && <span className="text-sm">{label}</span>}
     </div>
@@ -51,10 +51,10 @@ export function Spinner({ label }: { label?: string }) {
 
 export function EmptyState({ icon, title, body }: { icon?: ReactNode; title: string; body?: string }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 px-6 py-10 text-center">
-      {icon && <div className="mb-3 text-brand-300">{icon}</div>}
-      <p className="font-semibold text-ink">{title}</p>
-      {body && <p className="mt-1 max-w-sm text-sm text-ink-soft">{body}</p>}
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 px-6 py-10 text-center">
+      {icon && <div className="mb-3 text-brand-300 dark:text-brand-600">{icon}</div>}
+      <p className="font-semibold text-ink dark:text-slate-200">{title}</p>
+      {body && <p className="mt-1 max-w-sm text-sm text-ink-soft dark:text-slate-400">{body}</p>}
     </div>
   )
 }
@@ -101,7 +101,7 @@ export function AnxietyScale({
               className={`aspect-square rounded-lg text-xs font-semibold transition ${
                 active
                   ? `${SCALE_COLORS[i]} text-white ring-2 ring-offset-1 ring-ink/20 scale-105`
-                  : 'bg-slate-100 text-ink-soft hover:bg-slate-200'
+                  : 'bg-slate-100 dark:bg-slate-700 text-ink-soft dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
               }`}
             >
               {i}
@@ -146,7 +146,7 @@ export function ProgressRing({
   return (
     <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} stroke="#e2e8f0" strokeWidth={stroke} fill="none" />
+        <circle cx={size / 2} cy={size / 2} r={r} stroke="currentColor" className="text-slate-200 dark:text-slate-700" strokeWidth={stroke} fill="none" />
         <circle
           cx={size / 2}
           cy={size / 2}
