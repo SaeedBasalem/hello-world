@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#6366f1" />
+<title>Momentum · Daily & Weekly Routine</title>
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --surface-2: #f0f1f7;
+    --border: #e4e6ef;
+    --text: #1f2433;
+    --text-soft: #5b6276;
+    --text-faint: #9aa0b4;
+    --accent: #6366f1;
+    --accent-soft: #eef0ff;
+    --good: #16a34a;
+    --shadow: 0 1px 2px rgba(20,24,40,.04), 0 8px 24px rgba(20,24,40,.06);
+    --radius: 16px;
+
+    --cat-study: #6366f1;
+    --cat-hr: #0ea5e9;
+    --cat-gym: #f97316;
+    --cat-spirit: #10b981;
+    --cat-free: #ec4899;
+    --cat-personal: #94a3b8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1117;
+      --surface: #181b24;
+      --surface-2: #20242f;
+      --border: #2a2f3c;
+      --text: #e9ebf2;
+      --text-soft: #aab0c2;
+      --text-faint: #6b7287;
+      --accent: #818cf8;
+      --accent-soft: #232744;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 18px 16px 96px; }
+
+  /* Header */
+  header.app {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand .logo {
+    width: 44px; height: 44px; border-radius: 13px; flex: none;
+    background: linear-gradient(135deg, var(--accent), #a855f7);
+    display: grid; place-items: center; font-size: 22px;
+    box-shadow: var(--shadow);
+  }
+  .brand h1 { font-size: 20px; margin: 0; letter-spacing: -.3px; }
+  .brand .date { font-size: 13px; color: var(--text-soft); margin: 0; }
+
+  .head-stats { display: flex; align-items: center; gap: 18px; }
+  .ring { position: relative; width: 56px; height: 56px; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .pct {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .streak { text-align: center; }
+  .streak .num { font-size: 22px; font-weight: 800; line-height: 1; }
+  .streak .lbl { font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .5px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 6px; background: var(--surface-2); padding: 5px; border-radius: 12px; margin-bottom: 18px; }
+  .tabs button {
+    flex: 1; border: 0; background: transparent; color: var(--text-soft);
+    padding: 9px 10px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: .15s;
+  }
+  .tabs button.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+
+  /* Cards / blocks */
+  .day-head { display: flex; align-items: baseline; justify-content: space-between; margin: 4px 2px 10px; }
+  .day-head h2 { font-size: 16px; margin: 0; letter-spacing: -.2px; }
+  .day-head .meta { font-size: 12px; color: var(--text-faint); }
+
+  .block {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 4px solid var(--cat); border-radius: 12px;
+    padding: 11px 13px; margin-bottom: 9px; box-shadow: var(--shadow);
+    transition: .15s; position: relative;
+  }
+  .block.done { opacity: .58; }
+  .block.done .b-title { text-decoration: line-through; }
+  .block .time { font-variant-numeric: tabular-nums; font-size: 12.5px; color: var(--text-soft); width: 92px; flex: none; }
+  .block .b-main { flex: 1; min-width: 0; }
+  .block .b-title { font-weight: 600; font-size: 15px; }
+  .block .b-sub { font-size: 12px; color: var(--text-faint); }
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px; color: var(--cat);
+    background: color-mix(in srgb, var(--cat) 14%, transparent);
+  }
+  .check {
+    width: 26px; height: 26px; border-radius: 50%; flex: none; cursor: pointer;
+    border: 2px solid var(--border); background: var(--surface);
+    display: grid; place-items: center; color: #fff; transition: .15s;
+  }
+  .check.on { background: var(--good); border-color: var(--good); }
+  .check svg { opacity: 0; transition: .15s; }
+  .check.on svg { opacity: 1; }
+
+  .row-actions { display: flex; gap: 4px; }
+  .icon-btn {
+    border: 0; background: transparent; color: var(--text-faint); cursor: pointer;
+    width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+  }
+  .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+
+  .empty { text-align: center; color: var(--text-faint); padding: 26px 10px; font-size: 14px; }
+
+  .add-btn {
+    width: 100%; border: 1.5px dashed var(--border); background: transparent;
+    color: var(--text-soft); padding: 11px; border-radius: 12px; cursor: pointer;
+    font-size: 14px; font-weight: 600; margin-top: 4px;
+  }
+  .add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Week grid */
+  .week { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 760px){ .week { grid-template-columns: 1fr 1fr; } }
+  .week .day-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 13px; box-shadow: var(--shadow); }
+  .week .day-card.today { border-color: var(--accent); }
+  .mini { display: flex; align-items: center; gap: 8px; padding: 6px 2px; border-bottom: 1px solid var(--border); }
+  .mini:last-child { border-bottom: 0; }
+  .mini .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cat); flex: none; }
+  .mini .t { font-size: 11.5px; color: var(--text-faint); width: 74px; flex: none; font-variant-numeric: tabular-nums; }
+  .mini .n { font-size: 13px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Stats */
+  .stat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 16px; }
+  @media (min-width:600px){ .stat-grid { grid-template-columns: repeat(4,1fr); } }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: var(--shadow); }
+  .stat .v { font-size: 26px; font-weight: 800; letter-spacing: -.5px; }
+  .stat .k { font-size: 12px; color: var(--text-faint); }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .panel h3 { margin: 0 0 12px; font-size: 14px; }
+  .bars { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
+  .bars .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .bars .bar { width: 100%; max-width: 34px; border-radius: 6px 6px 0 0; background: var(--accent); transition: height .3s; min-height: 3px; }
+  .bars .bl { font-size: 11px; color: var(--text-faint); }
+
+  .balance-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+  .balance-row .nm { width: 96px; flex: none; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .balance-row .track { flex: 1; height: 9px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .balance-row .fill { height: 100%; background: var(--cat); border-radius: 999px; }
+  .balance-row .hrs { width: 58px; text-align: right; font-size: 12px; color: var(--text-soft); font-variant-numeric: tabular-nums; }
+
+  .tools { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    padding: 9px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+  }
+  .btn:hover { background: var(--surface-2); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.danger:hover { border-color: #ef4444; color: #ef4444; }
+
+  /* Modal */
+  .overlay { position: fixed; inset: 0; background: rgba(10,12,20,.5); backdrop-filter: blur(2px); display: none; place-items: center; padding: 16px; z-index: 50; }
+  .overlay.open { display: grid; }
+  .modal { background: var(--surface); border-radius: var(--radius); width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,.3); border: 1px solid var(--border); animation: pop .2s ease-out; }
+  @keyframes pop { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal .m-head { padding: 16px 18px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 16px; }
+  .modal .m-body { padding: 16px 18px; display: grid; gap: 13px; }
+  .modal .m-foot { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 8px; }
+  .field label { display: block; font-size: 12px; color: var(--text-soft); margin-bottom: 5px; font-weight: 600; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 10px 11px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--bg); color: var(--text); font-size: 14px; font-family: inherit;
+  }
+  .field textarea { resize: vertical; min-height: 52px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cat-pick { display: flex; flex-wrap: wrap; gap: 7px; }
+  .cat-pick button {
+    border: 1.5px solid var(--border); background: var(--surface); cursor: pointer;
+    padding: 7px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--text-soft);
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .cat-pick button.sel { border-color: var(--cat); color: var(--cat); background: color-mix(in srgb, var(--cat) 12%, transparent); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 2px 14px; }
+  .legend span { font-size: 12px; color: var(--text-soft); display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; opacity: 0; transition: .25s; pointer-events: none; z-index: 60;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .hint { font-size: 12px; color: var(--text-faint); margin: 2px 2px 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app">
+    <div class="brand">
+      <div class="logo">🚀</div>
+      <div>
+        <h1>Momentum</h1>
+        <p class="date" id="todayLabel"></p>
+      </div>
+    </div>
+    <div class="head-stats">
+      <div class="ring" title="Today's completion">
+        <svg width="56" height="56">
+          <circle cx="28" cy="28" r="24" fill="none" stroke="var(--surface-2)" stroke-width="6"></circle>
+          <circle id="ringFill" cx="28" cy="28" r="24" fill="none" stroke="var(--good)" stroke-width="6" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="150.8"></circle>
+        </svg>
+        <div class="pct" id="ringPct">0%</div>
+      </div>
+      <div class="streak">
+        <div class="num" id="streakNum">0</div>
+        <div class="lbl">🔥 streak</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button data-view="today" class="active">Today</button>
+    <button data-view="week">Week</button>
+    <button data-view="stats">Stats</button>
+  </div>
+
+  <main id="view"></main>
+</div>
+
+<!-- Edit modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="m-head" id="modalTitle">New block</div>
+    <div class="m-body">
+      <div class="field">
+        <label>What is it?</label>
+        <input id="f-title" placeholder="e.g. Self-study: HR certification" maxlength="80" />
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <div class="cat-pick" id="catPick"></div>
+      </div>
+      <div class="two">
+        <div class="field"><label>Start</label><input id="f-start" type="time" /></div>
+        <div class="field"><label>End</label><input id="f-end" type="time" /></div>
+      </div>
+      <div class="field">
+        <label>Day</label>
+        <select id="f-day"></select>
+      </div>
+      <div class="field">
+        <label>Notes (optional)</label>
+        <textarea id="f-notes" placeholder="Goal, focus, or reminder…" maxlength="160"></textarea>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn danger" id="m-delete" style="visibility:hidden">Delete</button>
+      <div style="display:flex; gap:8px;">
+        <button class="btn" id="m-cancel">Cancel</button>
+        <button class="btn primary" id="m-save">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Config ----------
+  var DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+  var DAYS_SHORT = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  var CATS = {
+    study:    { label:"Self-study", icon:"📚", color:"var(--cat-study)" },
+    hr:       { label:"HR / Work",  icon:"💼", color:"var(--cat-hr)" },
+    gym:      { label:"Gym",        icon:"🏋️", color:"var(--cat-gym)" },
+    spirit:   { label:"Spiritual",  icon:"🕊️", color:"var(--cat-spirit)" },
+    free:     { label:"Free time",  icon:"🎮", color:"var(--cat-free)" },
+    personal: { label:"Personal",   icon:"🌅", color:"var(--cat-personal)" }
+  };
+  var CAT_ORDER = ["study","hr","gym","spirit","free","personal"];
+
+  var STORE_KEY = "momentum.v1";
+
+  // ---------- Default starter routine (fully editable in-app) ----------
+  // day index: 0=Mon ... 6=Sun
+  function defaultSchedule(){
+    var s = [];
+    var id = 1;
+    function add(days, start, end, cat, title, notes){
+      days.forEach(function(d){
+        s.push({ id: "b"+(id++), day:d, start:start, end:end, category:cat, title:title, notes:notes||"" });
+      });
+    }
+    var WD = [0,1,2,3,4]; // Mon–Fri
+    // Weekdays
+    add(WD, "06:30","07:00","spirit","Morning prayer & reflection","Start the day grounded.");
+    add(WD, "07:00","07:45","personal","Wake routine & breakfast","");
+    add(WD, "09:00","17:00","hr","HR / work","Focused work blocks + breaks.");
+    add([0,1,3,4], "17:45","18:45","gym","Gym training","Follow your training split.");
+    add(WD, "19:00","19:45","free","Dinner & downtime","");
+    add(WD, "20:00","21:30","study","Self-study","Deep-focus, phone away.");
+    add(WD, "21:45","22:15","spirit","Evening reflection & wind-down","Plan tomorrow, gratitude.");
+    // Saturday
+    add([5], "08:00","08:30","spirit","Morning prayer & reflection","");
+    add([5], "10:00","11:30","study","Self-study (long block)","Weekly review + deep work.");
+    add([5], "12:00","13:00","gym","Gym training","");
+    add([5], "15:00","18:00","free","Free time / play","Recharge fully.");
+    add([5], "21:00","21:30","spirit","Evening reflection","");
+    // Sunday (lighter / reset)
+    add([6], "08:30","09:00","spirit","Morning prayer & reflection","");
+    add([6], "10:30","11:30","personal","Weekly planning & reset","Set goals for the week ahead.");
+    add([6], "14:00","17:00","free","Free time / play","Rest & relationships.");
+    add([6], "20:00","21:00","study","Light review / reading","Gentle prep for the week.");
+    add([6], "21:00","21:30","spirit","Evening reflection","");
+    return s;
+  }
+
+  // ---------- State ----------
+  var state = load();
+  var currentView = "today";
+  var editingId = null;
+  var editCat = "study";
+
+  function load(){
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (raw){
+        var p = JSON.parse(raw);
+        if (p && p.schedule) return { schedule:p.schedule, completions:p.completions||{} };
+      }
+    } catch(e){}
+    return { schedule: defaultSchedule(), completions: {} };
+  }
+  function save(){
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  // ---------- Date helpers ----------
+  function todayKey(d){ d=d||new Date();
+    return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function pad(n){ return (n<10?"0":"")+n; }
+  function weekdayIdx(d){ d=d||new Date(); return (d.getDay()+6)%7; } // Mon=0
+  function dateForOffset(off){ var d=new Date(); d.setDate(d.getDate()+off); return d; }
+
+  // ---------- Completion helpers ----------
+  function isDone(dateKey, blockId){
+    var day = state.completions[dateKey];
+    return !!(day && day[blockId]);
+  }
+  function toggleDone(dateKey, blockId){
+    if (!state.completions[dateKey]) state.completions[dateKey] = {};
+    if (state.completions[dateKey][blockId]) delete state.completions[dateKey][blockId];
+    else state.completions[dateKey][blockId] = true;
+    if (Object.keys(state.completions[dateKey]).length === 0) delete state.completions[dateKey];
+    save();
+  }
+  function blocksForDay(dayIdx){
+    return state.schedule.filter(function(b){ return b.day===dayIdx; })
+      .sort(function(a,b){ return a.start.localeCompare(b.start); });
+  }
+  function dayCompletion(dateKey, dayIdx){
+    var blocks = blocksForDay(dayIdx);
+    if (!blocks.length) return { done:0, total:0, pct:0 };
+    var done = blocks.filter(function(b){ return isDone(dateKey,b.id); }).length;
+    return { done:done, total:blocks.length, pct: Math.round(done/blocks.length*100) };
+  }
+
+  // A day "counts" toward streak if >=80% of its blocks are done.
+  function daySucceeded(dateKey, dayIdx){
+    var c = dayCompletion(dateKey, dayIdx);
+    return c.total>0 && (c.done/c.total) >= 0.8;
+  }
+  function currentStreak(){
+    var streak = 0;
+    for (var off=0; off<400; off++){
+      var d = dateForOffset(-off);
+      var key = todayKey(d), di = weekdayIdx(d);
+      var blocks = blocksForDay(di);
+      if (off===0){
+        // today only counts if already succeeded; otherwise skip without breaking
+        if (daySucceeded(key, di)) streak++;
+        continue;
+      }
+      if (blocks.length===0) continue; // rest day with no blocks doesn't break streak
+      if (daySucceeded(key, di)) streak++; else break;
+    }
+    return streak;
+  }
+  function longestStreak(){
+    // scan last 180 days
+    var best=0, run=0;
+    for (var off=180; off>=0; off--){
+      var d=dateForOffset(-off), key=todayKey(d), di=weekdayIdx(d);
+      if (blocksForDay(di).length===0) continue;
+      if (daySucceeded(key,di)){ run++; if(run>best) best=run; } else { run=0; }
+    }
+    return best;
+  }
+
+  // ---------- Time math ----------
+  function minutes(t){ var p=t.split(":"); return (+p[0])*60+(+p[1]); }
+  function durHrs(b){ var d=(minutes(b.end)-minutes(b.start))/60; return d>0?d:0; }
+  function fmt(t){
+    var p=t.split(":"), h=+p[0], m=p[1];
+    var ap = h<12?"AM":"PM"; var hh=h%12; if(hh===0)hh=12;
+    return hh+":"+m+" "+ap;
+  }
+
+  // ---------- Rendering ----------
+  var view = document.getElementById("view");
+
+  function render(){
+    document.getElementById("todayLabel").textContent =
+      new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+    renderHeaderStats();
+    if (currentView==="today") renderToday();
+    else if (currentView==="week") renderWeek();
+    else renderStats();
+  }
+
+  function renderHeaderStats(){
+    var key=todayKey(), di=weekdayIdx();
+    var c=dayCompletion(key,di);
+    var circ=2*Math.PI*24;
+    var off = circ*(1-c.pct/100);
+    document.getElementById("ringFill").setAttribute("stroke-dasharray", circ.toFixed(1));
+    document.getElementById("ringFill").setAttribute("stroke-dashoffset", off.toFixed(1));
+    document.getElementById("ringPct").textContent = c.pct+"%";
+    document.getElementById("streakNum").textContent = currentStreak();
+  }
+
+  function checkSVG(){ return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'; }
+  function penSVG(){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>'; }
+
+  function blockHTML(b, dateKey, editable){
+    var cat=CATS[b.category]||CATS.personal;
+    var done=isDone(dateKey,b.id);
+    return '<div class="block '+(done?'done':'')+'" style="--cat:'+cat.color+'">'+
+      '<div class="time">'+fmt(b.start)+'<br>'+fmt(b.end)+'</div>'+
+      '<div class="b-main">'+
+        '<div class="b-title">'+esc(b.title)+'</div>'+
+        '<div class="b-sub"><span class="chip" style="--cat:'+cat.color+'">'+cat.icon+' '+cat.label+'</span>'+
+        (b.notes?' &nbsp;·&nbsp; '+esc(b.notes):'')+'</div>'+
+      '</div>'+
+      '<div class="row-actions">'+
+        '<button class="icon-btn" data-edit="'+b.id+'" title="Edit">'+penSVG()+'</button>'+
+      '</div>'+
+      '<div class="check '+(done?'on':'')+'" data-toggle="'+b.id+'" title="Mark done">'+checkSVG()+'</div>'+
+    '</div>';
+  }
+
+  function renderToday(){
+    var key=todayKey(), di=weekdayIdx();
+    var blocks=blocksForDay(di);
+    var c=dayCompletion(key,di);
+    var html='<div class="day-head"><h2>'+DAYS[di]+'</h2><span class="meta">'+c.done+' / '+c.total+' done</span></div>';
+    if(!blocks.length){
+      html+='<div class="empty">No blocks today. Enjoy the rest — or add one below. 🌿</div>';
+    } else {
+      blocks.forEach(function(b){ html+=blockHTML(b,key,true); });
+    }
+    html+='<button class="add-btn" id="addToday">+ Add a block to '+DAYS[di]+'</button>';
+    view.innerHTML=html;
+    document.getElementById("addToday").onclick=function(){ openModal(null, di); };
+  }
+
+  function renderWeek(){
+    var todayIdx=weekdayIdx();
+    var html='<div class="legend">'+CAT_ORDER.map(function(k){
+      return '<span><i style="background:'+CATS[k].color+'"></i>'+CATS[k].label+'</span>';
+    }).join('')+'</div><div class="week">';
+    for(var d=0; d<7; d++){
+      var blocks=blocksForDay(d);
+      html+='<div class="day-card '+(d===todayIdx?'today':'')+'">'+
+        '<div class="day-head"><h2>'+DAYS[d]+(d===todayIdx?' · today':'')+'</h2>'+
+        '<span class="meta">'+blocks.length+' block'+(blocks.length===1?'':'s')+'</span></div>';
+      if(!blocks.length){ html+='<div class="empty" style="padding:14px">Rest day</div>'; }
+      else {
+        blocks.forEach(function(b){
+          var cat=CATS[b.category]||CATS.personal;
+          html+='<div class="mini" data-edit="'+b.id+'" style="cursor:pointer">'+
+            '<span class="dot" style="--cat:'+cat.color+'"></span>'+
+            '<span class="t">'+fmt(b.start)+'</span>'+
+            '<span class="n">'+esc(b.title)+'</span></div>';
+        });
+      }
+      html+='<button class="add-btn" style="margin-top:10px" data-add="'+d+'">+ Add</button>';
+      html+='</div>';
+    }
+    html+='</div>';
+    view.innerHTML=html;
+  }
+
+  function renderStats(){
+    // 7-day completion (last 7 days incl today)
+    var pcts=[], labels=[];
+    for(var off=6; off>=0; off--){
+      var d=dateForOffset(-off), key=todayKey(d), di=weekdayIdx(d);
+      var c=dayCompletion(key,di);
+      pcts.push(c.total? c.pct : 0);
+      labels.push(DAYS_SHORT[di]);
+    }
+    var avg7=Math.round(pcts.reduce(function(a,b){return a+b;},0)/7);
+
+    // category balance (weekly planned hours)
+    var hrs={}; CAT_ORDER.forEach(function(k){ hrs[k]=0; });
+    state.schedule.forEach(function(b){ hrs[b.category]=(hrs[b.category]||0)+durHrs(b); });
+    var maxHr=Math.max.apply(null, CAT_ORDER.map(function(k){return hrs[k];}).concat([1]));
+
+    var today=dayCompletion(todayKey(),weekdayIdx());
+
+    var html='';
+    html+='<div class="stat-grid">'+
+      stat(today.pct+'%','Today')+
+      stat(avg7+'%','7-day avg')+
+      stat(currentStreak(),'🔥 Current streak')+
+      stat(longestStreak(),'Best streak')+
+    '</div>';
+
+    // bar chart
+    html+='<div class="panel"><h3>Last 7 days completion</h3><div class="bars">';
+    for(var i=0;i<7;i++){
+      html+='<div class="bar-wrap"><div class="bar" style="height:'+Math.max(3,pcts[i])+'%"></div><div class="bl">'+labels[i]+'</div></div>';
+    }
+    html+='</div></div>';
+
+    // balance
+    html+='<div class="panel"><h3>Weekly balance (planned hours)</h3>';
+    CAT_ORDER.forEach(function(k){
+      var h=hrs[k]||0;
+      html+='<div class="balance-row" style="--cat:'+CATS[k].color+'">'+
+        '<span class="nm">'+CATS[k].icon+' '+CATS[k].label+'</span>'+
+        '<span class="track"><span class="fill" style="width:'+(h/maxHr*100)+'%"></span></span>'+
+        '<span class="hrs">'+(Math.round(h*10)/10)+'h</span></div>';
+    });
+    html+='</div>';
+
+    // tools
+    html+='<div class="panel"><h3>Your data</h3>'+
+      '<p class="hint" style="margin-top:-4px">Everything is saved on this device only. Export a backup to move it to your phone or another browser.</p>'+
+      '<div class="tools">'+
+        '<button class="btn" id="exportBtn">⬇ Export backup</button>'+
+        '<button class="btn" id="importBtn">⬆ Import backup</button>'+
+        '<button class="btn danger" id="resetBtn">↺ Reset to starter routine</button>'+
+      '</div><input type="file" id="importFile" accept="application/json" style="display:none"></div>';
+
+    view.innerHTML=html;
+
+    document.getElementById("exportBtn").onclick=exportData;
+    document.getElementById("importBtn").onclick=function(){ document.getElementById("importFile").click(); };
+    document.getElementById("importFile").onchange=importData;
+    document.getElementById("resetBtn").onclick=function(){
+      if(confirm("Reset everything to the starter routine? Your edits and completion history will be cleared.")){
+        state={ schedule:defaultSchedule(), completions:{} }; save(); render(); toast("Reset to starter routine");
+      }
+    };
+  }
+  function stat(v,k){ return '<div class="stat"><div class="v">'+v+'</div><div class="k">'+k+'</div></div>'; }
+
+  // ---------- Modal ----------
+  var overlay=document.getElementById("overlay");
+  function buildCatPick(){
+    var el=document.getElementById("catPick");
+    el.innerHTML=CAT_ORDER.map(function(k){
+      return '<button data-cat="'+k+'" style="--cat:'+CATS[k].color+'">'+CATS[k].icon+' '+CATS[k].label+'</button>';
+    }).join('');
+    Array.prototype.forEach.call(el.querySelectorAll('button'),function(btn){
+      btn.onclick=function(){ editCat=btn.getAttribute('data-cat'); paintCatPick(); };
+    });
+    var dsel=document.getElementById("f-day");
+    dsel.innerHTML=DAYS.map(function(d,i){ return '<option value="'+i+'">'+d+'</option>'; }).join('');
+  }
+  function paintCatPick(){
+    Array.prototype.forEach.call(document.querySelectorAll('#catPick button'),function(btn){
+      btn.classList.toggle('sel', btn.getAttribute('data-cat')===editCat);
+    });
+  }
+  function openModal(id, dayIdx){
+    editingId=id;
+    var del=document.getElementById("m-delete");
+    if(id){
+      var b=state.schedule.find(function(x){return x.id===id;});
+      if(!b) return;
+      document.getElementById("modalTitle").textContent="Edit block";
+      document.getElementById("f-title").value=b.title;
+      document.getElementById("f-start").value=b.start;
+      document.getElementById("f-end").value=b.end;
+      document.getElementById("f-day").value=b.day;
+      document.getElementById("f-notes").value=b.notes||"";
+      editCat=b.category;
+      del.style.visibility="visible";
+    } else {
+      document.getElementById("modalTitle").textContent="New block";
+      document.getElementById("f-title").value="";
+      document.getElementById("f-start").value="09:00";
+      document.getElementById("f-end").value="10:00";
+      document.getElementById("f-day").value = (dayIdx!=null?dayIdx:weekdayIdx());
+      document.getElementById("f-notes").value="";
+      editCat="study";
+      del.style.visibility="hidden";
+    }
+    paintCatPick();
+    overlay.classList.add("open");
+    document.getElementById("f-title").focus();
+  }
+  function closeModal(){ overlay.classList.remove("open"); editingId=null; }
+
+  document.getElementById("m-cancel").onclick=closeModal;
+  overlay.onclick=function(e){ if(e.target===overlay) closeModal(); };
+  document.getElementById("m-delete").onclick=function(){
+    if(editingId && confirm("Delete this block?")){
+      state.schedule=state.schedule.filter(function(b){return b.id!==editingId;});
+      save(); closeModal(); render(); toast("Block deleted");
+    }
+  };
+  document.getElementById("m-save").onclick=function(){
+    var title=document.getElementById("f-title").value.trim();
+    var start=document.getElementById("f-start").value;
+    var end=document.getElementById("f-end").value;
+    var day=+document.getElementById("f-day").value;
+    var notes=document.getElementById("f-notes").value.trim();
+    if(!title){ toast("Give it a title"); return; }
+    if(!start||!end){ toast("Set a start and end time"); return; }
+    if(minutes(end)<=minutes(start)){ toast("End must be after start"); return; }
+    if(editingId){
+      var b=state.schedule.find(function(x){return x.id===editingId;});
+      Object.assign(b,{title:title,start:start,end:end,day:day,notes:notes,category:editCat});
+    } else {
+      state.schedule.push({ id:"b"+Date.now(), day:day, start:start, end:end, category:editCat, title:title, notes:notes });
+    }
+    save(); closeModal(); render(); toast("Saved");
+  };
+
+  // ---------- Global click handling (event delegation) ----------
+  view.addEventListener("click", function(e){
+    var t=e.target.closest("[data-toggle]");
+    if(t){ toggleDone(todayKey(), t.getAttribute("data-toggle")); render(); return; }
+    var ed=e.target.closest("[data-edit]");
+    if(ed){ openModal(ed.getAttribute("data-edit")); return; }
+    var ad=e.target.closest("[data-add]");
+    if(ad){ openModal(null, +ad.getAttribute("data-add")); return; }
+  });
+
+  // ---------- Tabs ----------
+  Array.prototype.forEach.call(document.querySelectorAll(".tabs button"), function(btn){
+    btn.onclick=function(){
+      currentView=btn.getAttribute("data-view");
+      Array.prototype.forEach.call(document.querySelectorAll(".tabs button"),function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+      render();
+    };
+  });
+
+  // ---------- Export / Import ----------
+  function exportData(){
+    var blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    a.href=url; a.download="momentum-routine-"+todayKey()+".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url); toast("Backup downloaded");
+  }
+  function importData(e){
+    var file=e.target.files[0]; if(!file) return;
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var p=JSON.parse(r.result);
+        if(p && p.schedule){ state={schedule:p.schedule, completions:p.completions||{}}; save(); render(); toast("Backup restored"); }
+        else toast("That file doesn't look right");
+      }catch(err){ toast("Could not read that file"); }
+    };
+    r.readAsText(file);
+    e.target.value="";
+  }
+
+  // ---------- Utils ----------
+  function esc(s){ return (s||"").replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  var toastTimer;
+  function toast(msg){
+    var el=document.getElementById("toast");
+    el.textContent=msg; el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){ el.classList.remove("show"); }, 1800);
+  }
+
+  // ---------- Init ----------
+  buildCatPick();
+  render();
+})();
+</script>
+</body>
+</html>
