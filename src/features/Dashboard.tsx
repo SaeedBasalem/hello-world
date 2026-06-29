@@ -2,7 +2,17 @@ import { useEffect, useState } from 'react'
 import {
   Wind, Trophy, NotebookPen, TrendingUp, ArrowRight,
   Quote, ListChecks, Repeat, Sparkles, Target, Flame, Zap, ChevronRight,
+  Check, X,
 } from 'lucide-react'
+
+const HABITS = [
+  { key: 'coffee',  emoji: '☕', label: 'Morning coffee',  cue: 'After your morning coffee' },
+  { key: 'teeth',   emoji: '🪥', label: 'Brush teeth',     cue: 'After brushing your teeth' },
+  { key: 'shower',  emoji: '🚿', label: 'Morning shower',  cue: 'After your morning shower' },
+  { key: 'lunch',   emoji: '🍽️', label: 'Lunch',           cue: 'After lunch' },
+  { key: 'bed',     emoji: '🌙', label: 'Before bed',      cue: 'Before you go to bed' },
+] as const
+type HabitKey = typeof HABITS[number]['key']
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useProfile } from '../context/ProfileContext'
@@ -23,6 +33,25 @@ export default function Dashboard({ onNavigate }: { onNavigate: (v: View) => voi
   const [winFlash, setWinFlash] = useState(false)
   const day = todayStr()
 
+  const [habitKey, setHabitKey] = useState<HabitKey | null>(
+    () => localStorage.getItem('steady_habit_anchor') as HabitKey | null
+  )
+  const [showHabitSetup, setShowHabitSetup] = useState(false)
+  const [coachDoneToday, setCoachDoneToday] = useState(
+    () => localStorage.getItem('steady_coach_date') === day
+  )
+
+  const saveHabit = (key: HabitKey) => {
+    localStorage.setItem('steady_habit_anchor', key)
+    setHabitKey(key)
+    setShowHabitSetup(false)
+  }
+  const clearHabit = () => {
+    localStorage.removeItem('steady_habit_anchor')
+    setHabitKey(null)
+    setShowHabitSetup(false)
+  }
+
   const load = async () => {
     if (!user) return
     const [r, s, c] = await Promise.all([
@@ -39,6 +68,13 @@ export default function Dashboard({ onNavigate }: { onNavigate: (v: View) => voi
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
+
+  // Re-check coach goal when user navigates back to this tab/page
+  useEffect(() => {
+    const refresh = () => setCoachDoneToday(localStorage.getItem('steady_coach_date') === day)
+    document.addEventListener('visibilitychange', refresh)
+    return () => document.removeEventListener('visibilitychange', refresh)
+  }, [day])
 
   const logWin = async () => {
     if (!user) return
@@ -75,6 +111,34 @@ export default function Dashboard({ onNavigate }: { onNavigate: (v: View) => voi
   const goldDone       = todayCompletions.some(c => c.challenge_key === todayChallenge.gold.key)
   const challengesXpToday = todayCompletions.reduce((s, c) => s + c.xp_earned, 0)
 
+  // Daily goals + focus computation
+  const goals = [
+    {
+      id: 'routine',
+      done: doneCount === ROUTINE_TASKS.length,
+      label: 'Complete your daily routine',
+      sublabel: doneCount === 0 ? 'Not started yet' : `${doneCount} of ${ROUTINE_TASKS.length} done`,
+      onGo: () => onNavigate('routine'),
+    },
+    {
+      id: 'coach',
+      done: coachDoneToday,
+      label: 'Practice with the AI Coach',
+      sublabel: coachDoneToday ? 'Done today' : 'Speak a real scenario out loud',
+      onGo: () => onNavigate('coach'),
+    },
+    {
+      id: 'challenge',
+      done: goldDone,
+      label: "Today's gold challenge",
+      sublabel: goldDone ? 'Done · +75 XP' : `${todayChallenge.gold.emoji} ${todayChallenge.gold.text}`,
+      onGo: () => onNavigate('challenges'),
+    },
+  ]
+  const firstIncomplete = goals.find(g => !g.done)
+  const goalsDoneCount  = goals.filter(g => g.done).length
+  const activeHabit     = HABITS.find(h => h.key === habitKey)
+
   return (
     <div className="space-y-5">
 
@@ -85,6 +149,107 @@ export default function Dashboard({ onNavigate }: { onNavigate: (v: View) => voi
         </h1>
         <p className="text-sm text-ink-soft dark:text-slate-400">{prettyDateLong(day)}</p>
       </div>
+
+      {/* ── TODAY'S ONE THING ─────────────────────────────────────────────────── */}
+      <div className="animate-fade-in rounded-2xl bg-gradient-to-br from-violet-600 via-brand-600 to-brand-700 p-5 text-white shadow-lg">
+        <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-white/50">
+          Today's one thing
+        </p>
+        {firstIncomplete ? (
+          <>
+            <p className="text-xl font-extrabold leading-tight">{firstIncomplete.label}</p>
+            <p className="mt-1 text-sm text-white/70">{firstIncomplete.sublabel}</p>
+            <button
+              onClick={firstIncomplete.onGo}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-white/20 py-3 text-sm font-bold transition hover:bg-white/30 active:scale-95"
+            >
+              Start now <ArrowRight className="h-4 w-4" />
+            </button>
+          </>
+        ) : (
+          <>
+            <p className="text-xl font-extrabold">All 3 goals done today!</p>
+            <p className="mt-1 text-sm text-white/70">Incredible consistency. Extra practice?</p>
+            <button
+              onClick={() => onNavigate('coach')}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-white/20 py-3 text-sm font-bold transition hover:bg-white/30"
+            >
+              Practice again <ArrowRight className="h-4 w-4" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* ── TODAY'S GOALS ─────────────────────────────────────────────────────── */}
+      <Card>
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-sm font-bold text-ink dark:text-slate-100">Today's goals</p>
+          <span className={`text-xs font-bold ${goalsDoneCount === 3 ? 'text-emerald-500' : 'text-brand-500 dark:text-brand-400'}`}>
+            {goalsDoneCount} / 3
+          </span>
+        </div>
+        <div className="space-y-1">
+          {goals.map(g => (
+            <button
+              key={g.id}
+              onClick={g.onGo}
+              className="flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition hover:bg-slate-50 dark:hover:bg-slate-800/60"
+            >
+              <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition ${
+                g.done
+                  ? 'border-emerald-500 bg-emerald-500 text-white'
+                  : 'border-slate-300 dark:border-slate-600'
+              }`}>
+                {g.done && <Check className="h-3.5 w-3.5" />}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className={`text-sm font-semibold ${
+                  g.done ? 'text-ink-faint dark:text-slate-500 line-through' : 'text-ink dark:text-slate-200'
+                }`}>
+                  {g.label}
+                </p>
+                <p className="text-xs text-ink-faint dark:text-slate-500">{g.sublabel}</p>
+              </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-ink-faint dark:text-slate-600" />
+            </button>
+          ))}
+        </div>
+      </Card>
+
+      {/* ── HABIT STACK ───────────────────────────────────────────────────────── */}
+      {activeHabit ? (
+        <div className="flex items-center gap-3 rounded-2xl border border-amber-200 dark:border-amber-800/50 bg-amber-50/60 dark:bg-amber-900/10 px-4 py-3">
+          <span className="shrink-0 select-none text-2xl">{activeHabit.emoji}</span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-ink dark:text-slate-100">{activeHabit.cue}</p>
+            <p className="text-xs font-medium text-amber-700 dark:text-amber-400">
+              → open Steady and practice speaking
+            </p>
+          </div>
+          <button
+            onClick={() => setShowHabitSetup(true)}
+            className="shrink-0 rounded-lg px-2 py-1 text-xs text-ink-faint dark:text-slate-500 transition hover:text-ink dark:hover:text-slate-300"
+          >
+            Change
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => setShowHabitSetup(true)}
+          className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-4 text-left transition hover:border-brand-400 hover:bg-brand-50/50 dark:hover:bg-brand-900/20"
+        >
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400">
+            <Repeat className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-ink dark:text-slate-100">Add a habit reminder</p>
+            <p className="text-xs text-ink-faint dark:text-slate-500">
+              Link speaking practice to something you already do every day
+            </p>
+          </div>
+          <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-ink-faint dark:text-slate-500" />
+        </button>
+      )}
 
       {/* XP + Streak banner */}
       <div className="rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-800 dark:to-[#0f172a] p-4 text-white shadow-lg">
@@ -222,6 +387,60 @@ export default function Dashboard({ onNavigate }: { onNavigate: (v: View) => voi
           Open the ladder <ArrowRight className="h-4 w-4" />
         </button>
       </Card>
+
+      {/* ── HABIT SETUP MODAL ─────────────────────────────────────────────────── */}
+      {showHabitSetup && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowHabitSetup(false)}
+          />
+          <div className="relative w-full max-w-sm animate-fade-in rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl">
+            <div className="mb-1 flex items-center justify-between">
+              <p className="text-lg font-extrabold text-ink dark:text-slate-100">Pick a daily habit</p>
+              <button
+                onClick={() => setShowHabitSetup(false)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-ink-faint dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="mb-4 text-sm text-ink-soft dark:text-slate-400">
+              Practice right after this habit every day. You'll never need to remember — it just happens.
+            </p>
+            <div className="space-y-2">
+              {HABITS.map(h => (
+                <button
+                  key={h.key}
+                  onClick={() => saveHabit(h.key)}
+                  className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition ${
+                    habitKey === h.key
+                      ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 dark:border-brand-600'
+                      : 'border-slate-200 dark:border-slate-700 hover:border-brand-300 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                  }`}
+                >
+                  <span className="select-none text-2xl">{h.emoji}</span>
+                  <div>
+                    <p className="text-sm font-semibold text-ink dark:text-slate-200">{h.label}</p>
+                    <p className="text-xs text-ink-faint dark:text-slate-500">{h.cue} → practice speaking</p>
+                  </div>
+                  {habitKey === h.key && (
+                    <Check className="ml-auto h-5 w-5 shrink-0 text-brand-500" />
+                  )}
+                </button>
+              ))}
+            </div>
+            {habitKey && (
+              <button
+                onClick={clearHabit}
+                className="mt-4 w-full text-center text-xs text-ink-faint dark:text-slate-500 transition hover:text-red-500 dark:hover:text-red-400"
+              >
+                Remove habit reminder
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
