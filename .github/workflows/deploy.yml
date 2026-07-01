@@ -1,7 +1,7 @@
 name: Deploy Steady to GitHub Pages
 on:
   push:
-    branches: [master, main]
+    branches: [master, main, SaeedBasalem-steadybundle]
   workflow_dispatch:
 permissions:
   contents: read
