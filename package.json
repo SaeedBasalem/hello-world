@@ -6,7 +6,7 @@
   "description": "Steady — a speaking-confidence & fluency companion app.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && cp -r momentum dist/momentum",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit"
   },

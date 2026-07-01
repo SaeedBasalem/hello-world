@@ -4,6 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#7c3aed" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Momentum" />
 <title>Momentum · Urban Discipline</title>
 <style>
 :root {
@@ -55,6 +60,14 @@ body{
 
 /* Layout */
 .wrap{max-width:980px;margin:0 auto;padding:18px 14px 100px;}
+
+/* Install button */
+.install-btn{
+  border:1px solid var(--accent);background:transparent;color:var(--accent);
+  padding:7px 14px;border-radius:10px;font-size:12px;font-weight:700;
+  cursor:pointer;transition:.15s;white-space:nowrap;letter-spacing:.5px;
+}
+.install-btn:hover{background:rgba(124,58,237,.18);}
 
 /* Header */
 header.app{
@@ -534,6 +547,7 @@ header.app{
         <div class="tagline" id="todayLabel">Loading…</div>
       </div>
     </div>
+    <button class="install-btn" id="installBtn" style="display:none" title="Install app">↓ Install</button>
     <div class="head-stats">
       <div class="ring-wrap" title="Today's completion">
         <svg width="56" height="56">
@@ -875,206 +889,79 @@ function renderHeader(){
 
 function renderToday(){
   var k=todayKey(), di=wdIdx();
-  var blocks=blocksForDay(di), c=dayComp(k,di), q=todayQuote();
+  var blocks=blocksForDay(di), c=dayComp(k,di);
   var nm=nowMins();
   var upcoming=blocks.filter(function(b){return mins(b.end)>nm;});
-  var curBlock=upcoming.length&&isNow(upcoming[0])?upcoming[0]:null;
-  var nextBlocks=curBlock?upcoming.slice(1,3):upcoming.slice(0,2);
-
-  // Tasks
-  var tasks=getTasks(k);
-  var tasksDone=tasks.filter(function(t){return t.done;}).length;
-  var yk=todayKey(dOff(-1));
-  var carryover=(state.tasks[yk]||[]).filter(function(t){return!t.done;});
+  var cur=upcoming.length&&isNow(upcoming[0])?upcoming[0]:null;
+  var nxt=cur?upcoming[1]:upcoming[0];
 
   var html='';
 
-  // Quote
-  html+='<div class="quote-bar">'+
-    '<div class="quote-icon">💬</div>'+
-    '<div><div class="quote-text">'+esc(q.t)+'</div>'+
-    '<div class="quote-author">— '+esc(q.a)+'</div></div></div>';
-
-  // Day title + dual progress
+  // Header row
   html+='<div class="today-head">'+
     '<div><div class="today-title">'+DAYS[di]+'</div>'+
-    '<div class="today-sub">'+blocks.length+' scheduled · '+tasks.length+' tasks</div></div>'+
-    '<div class="done-badge"><div class="dn">'+c.done+'/'+c.total+'</div><div class="dk">blocks done</div></div>'+
+    '<div class="today-sub">'+new Date().toLocaleDateString(undefined,{month:"long",day:"numeric"})+'</div></div>'+
+    '<div class="done-badge"><div class="dn">'+c.done+' / '+c.total+'</div><div class="dk">done</div></div>'+
   '</div>';
+
+  // Progress bar
   html+='<div class="tp-wrap">'+
-    '<div class="tp-label"><span>SCHEDULE PROGRESS</span><span>'+c.pct+'%</span></div>'+
+    '<div class="tp-label"><span>TODAY</span><span>'+c.pct+'%</span></div>'+
     '<div class="tp-track"><div class="tp-fill" style="width:'+c.pct+'%"></div></div></div>';
 
-  // ── NOW / NEXT ──
-  html+='<div class="sec-label">⚡ NOW &amp; NEXT</div>';
+  // NOW / NEXT cards
   html+='<div class="nn-grid">';
-
-  if(curBlock){
-    var cat0=CATS[curBlock.category]||CATS.personal;
-    var lft=timeLeft(curBlock);
+  if(cur){
+    var cat0=CATS[cur.category]||CATS.personal;
     html+='<div class="nn-card is-now" style="--ncat:'+cat0.color+'">'+
-      '<div class="nn-top"><span class="nn-badge now-badge">● NOW</span><span class="nn-time-str">'+fmt(curBlock.start)+'–'+fmt(curBlock.end)+'</span></div>'+
-      '<div class="nn-title">'+esc(curBlock.title)+'</div>'+
-      '<div class="nn-meta"><span class="chip" style="--cat:'+cat0.color+'">'+cat0.icon+' '+cat0.label+'</span></div>'+
-      (lft?'<div class="nn-left">⏱ '+lft+'</div>':'')+
-    '</div>';
+      '<div class="nn-top"><span class="nn-badge now-badge">● NOW</span>'+
+      '<span class="nn-time-str">'+fmt(cur.start)+'–'+fmt(cur.end)+'</span></div>'+
+      '<div class="nn-title">'+esc(cur.title)+'</div>'+
+      '<div class="nn-meta"><span class="chip" style="--cat:'+cat0.color+'">'+cat0.icon+' '+cat0.label+'</span>'+
+      (timeLeft(cur)?'<span class="nn-left">⏱ '+timeLeft(cur)+'</span>':'')+
+      '</div></div>';
   }else{
     html+='<div class="nn-card nn-free">'+
       '<div class="nn-top"><span class="nn-badge free-badge">FREE</span></div>'+
-      '<div class="nn-title">No active block right now</div>'+
-      '<div class="nn-meta" style="color:var(--faint);font-size:12px">Enjoy the gap — or get ahead ↓</div>'+
+      '<div class="nn-title" style="color:var(--faint)">No active block</div>'+
     '</div>';
   }
-
-  html+='<div class="nn-next-col">';
-  if(nextBlocks.length){
-    nextBlocks.forEach(function(b,i){
-      var catN=CATS[b.category]||CATS.personal;
-      var until=timeUntil(b);
-      html+='<div class="nn-card" style="--ncat:'+catN.color+'">'+
-        '<div class="nn-top">'+
-          '<span class="nn-badge '+(i===0?'next-badge':'later-badge')+'">'+(i===0?'NEXT':'LATER')+'</span>'+
-          '<span class="nn-time-str">'+fmt(b.start)+'–'+fmt(b.end)+'</span>'+
-        '</div>'+
-        '<div class="nn-title">'+esc(b.title)+'</div>'+
-        '<div class="nn-meta">'+
-          '<span class="chip" style="--cat:'+catN.color+'">'+catN.icon+' '+catN.label+'</span>'+
-          (until?'<span class="nn-until">'+until+'</span>':'')+
-        '</div>'+
-      '</div>';
-    });
+  if(nxt){
+    var catN=CATS[nxt.category]||CATS.personal;
+    html+='<div class="nn-card" style="--ncat:'+catN.color+'">'+
+      '<div class="nn-top"><span class="nn-badge next-badge">NEXT</span>'+
+      '<span class="nn-time-str">'+fmt(nxt.start)+'–'+fmt(nxt.end)+'</span></div>'+
+      '<div class="nn-title">'+esc(nxt.title)+'</div>'+
+      '<div class="nn-meta"><span class="chip" style="--cat:'+catN.color+'">'+catN.icon+' '+catN.label+'</span>'+
+      (timeUntil(nxt)?'<span class="nn-until">'+timeUntil(nxt)+'</span>':'')+
+      '</div></div>';
   }else{
     html+='<div class="nn-card nn-free">'+
-      '<div class="nn-top"><span class="nn-badge free-badge">ALL DONE</span></div>'+
-      '<div class="nn-title">No more blocks today 🎉</div>'+
+      '<div class="nn-top"><span class="nn-badge free-badge">✓</span></div>'+
+      '<div class="nn-title" style="color:var(--faint)">All done for today</div>'+
     '</div>';
   }
-  html+='</div></div>';
-
-  // ── DAILY TASKS ──
-  html+='<div class="sec-label">✅ DAILY TASKS</div>';
-  html+='<div class="dash-panel">';
-  html+='<div class="tasks-head">'+
-    '<span class="tasks-count-badge">'+tasksDone+' / '+tasks.length+' done</span>'+
-    (tasks.length?'<div class="tasks-pbar-wrap"><div class="tasks-pbar-fill" style="width:'+Math.round(tasksDone/tasks.length*100)+'%"></div></div>':'')+'</div>';
-
-  if(carryover.length){
-    html+='<div class="carryover-label">↩ '+carryover.length+' unfinished task'+(carryover.length>1?'s':'')+' from yesterday</div>';
-    carryover.forEach(function(t){
-      var cat=CATS[t.cat]||CATS.personal;
-      html+='<div class="task-item task-carryover" style="--tcat:'+cat.color+'">'+
-        '<div class="task-check'+(t.done?' on':'')+'" data-task-toggle="'+t.id+'" data-task-date="'+yk+'">'+chkSVG()+'</div>'+
-        '<span class="task-text">'+esc(t.text)+'</span>'+
-        '<span class="chip" style="--cat:'+cat.color+';font-size:11px">'+cat.icon+'</span>'+
-        '<button class="task-del" data-task-del="'+t.id+'" data-task-date="'+yk+'" title="Remove">×</button>'+
-      '</div>';
-    });
-  }
-
-  if(!tasks.length&&!carryover.length){
-    html+='<div style="padding:8px 2px;font-size:13px;color:var(--faint)">No tasks yet — use the form below to add your specific goals for today.</div>';
-  }else{
-    tasks.forEach(function(t){
-      var cat=CATS[t.cat]||CATS.personal;
-      html+='<div class="task-item'+(t.done?' task-done':'')+'" style="--tcat:'+cat.color+'">'+
-        '<div class="task-check'+(t.done?' on':'')+'" data-task-toggle="'+t.id+'" data-task-date="'+k+'">'+chkSVG()+'</div>'+
-        '<span class="task-text">'+esc(t.text)+'</span>'+
-        '<span class="chip" style="--cat:'+cat.color+';font-size:11px">'+cat.icon+'</span>'+
-        '<button class="task-del" data-task-del="'+t.id+'" data-task-date="'+k+'" title="Remove">×</button>'+
-      '</div>';
-    });
-  }
-
-  html+='<div class="task-add-row">'+
-    '<input class="task-inp" id="taskInp" placeholder="Add a specific goal task for today…" maxlength="120"/>'+
-    '<select class="task-cat-sel" id="taskCatSel">'+
-      CAT_ORDER.map(function(ck){return'<option value="'+ck+'">'+CATS[ck].icon+' '+CATS[ck].label+'</option>';}).join('')+
-    '</select>'+
-    '<button class="task-add-btn" id="taskAddBtn">+ Add</button>'+
-  '</div></div>';
-
-  // ── WEEKLY GOAL PROGRESS ──
-  var weekHrs={}, doneHrs={};
-  CAT_ORDER.forEach(function(ck){weekHrs[ck]=0;doneHrs[ck]=0;});
-  state.schedule.forEach(function(b){weekHrs[b.category]=(weekHrs[b.category]||0)+durHrs(b);});
-  for(var o=0;o<7;o++){
-    var dd=dOff(-o),kk=todayKey(dd),ddi=wdIdx(dd);
-    blocksForDay(ddi).forEach(function(b){if(isDone(kk,b.id))doneHrs[b.category]=(doneHrs[b.category]||0)+durHrs(b);});
-  }
-  html+='<div class="sec-label">📊 WEEKLY GOAL PROGRESS <span style="font-weight:400;letter-spacing:.5px;font-size:9px">— PAST 7 DAYS</span></div>';
-  html+='<div class="dash-panel gp-panel">';
-  var anyGoal=false;
-  CAT_ORDER.forEach(function(ck){
-    if(!weekHrs[ck])return;
-    anyGoal=true;
-    var cat=CATS[ck],plan=weekHrs[ck],done=doneHrs[ck]||0;
-    var pct=Math.min(100,Math.round(done/plan*100));
-    var strk=0;
-    for(var o2=0;o2<30;o2++){
-      var dd2=dOff(-o2),kk2=todayKey(dd2),ddi2=wdIdx(dd2);
-      var cb=blocksForDay(ddi2).filter(function(b){return b.category===ck;});
-      if(!cb.length)continue;
-      if(cb.filter(function(b){return isDone(kk2,b.id);}).length>0)strk++;else if(o2>0)break;
-    }
-    html+='<div class="gp-row" style="--gc:'+cat.color+'">'+
-      '<span class="gp-icon">'+cat.icon+'</span>'+
-      '<span class="gp-name">'+cat.label+'</span>'+
-      '<div class="gp-bar-wrap"><div class="gp-bar-fill" style="width:'+pct+'%;background:'+cat.color+'"></div></div>'+
-      '<span class="gp-pct" style="color:'+cat.color+'">'+pct+'%</span>'+
-      '<span class="gp-hrs">'+done.toFixed(1)+'h</span>'+
-      '<span class="gp-streak">'+(strk>1?'🔥'+strk:'')+'</span>'+
-    '</div>';
-  });
-  if(!anyGoal)html+='<div style="padding:8px 2px;font-size:13px;color:var(--faint)">No goal blocks scheduled yet.</div>';
   html+='</div>';
 
-  // ── TODAY'S SCHEDULE (collapsible) ──
-  html+='<div class="sec-label">📅 TODAY\'S SCHEDULE</div>';
-  html+='<button class="sched-toggle-btn" id="schedToggle">'+
-    '<span>'+DAYS[di]+' — '+blocks.length+' blocks · '+c.done+' / '+c.total+' completed</span>'+
-    '<span id="schedArrow" style="font-size:12px">▾</span>'+
-  '</button>';
-  html+='<div id="schedContent">';
+  // Full schedule
   if(!blocks.length){
-    html+='<div class="empty-day"><div class="ei">🌿</div><p>Rest day. No blocks scheduled.</p></div>';
+    html+='<div class="empty-day"><div class="ei">🌿</div><p>Rest day — no blocks scheduled.</p></div>';
   }else{
     var morn=[],aft=[],eve=[];
     blocks.forEach(function(b){var m=mins(b.start);if(m<720)morn.push(b);else if(m<1080)aft.push(b);else eve.push(b);});
-    function renderSec(lbl,arr){
+    function sec(lbl,arr){
       if(!arr.length)return'';
-      var s='<div class="sec-label" style="margin-top:10px">'+lbl+'</div>';
+      var s='<div class="sec-label">'+lbl+'</div>';
       arr.forEach(function(b){s+=blockHTML(b,k);});
       return s;
     }
-    html+=renderSec("Morning — الصباح",morn);
-    html+=renderSec("Afternoon — بعد الظهر",aft);
-    html+=renderSec("Evening — المساء",eve);
+    html+=sec("Morning",morn);
+    html+=sec("Afternoon",aft);
+    html+=sec("Evening",eve);
   }
-  html+='<button class="add-btn" id="addBtn" style="margin-top:8px">+ Add a block to '+DAYS[di]+'</button>';
-  html+='</div>';
+  html+='<button class="add-btn" id="addBtn">+ Add block</button>';
 
   VIEW.innerHTML=html;
-
-  // Bind task add
-  document.getElementById("taskAddBtn").onclick=doAddTask;
-  document.getElementById("taskInp").onkeydown=function(e){if(e.key==="Enter")doAddTask();};
-  function doAddTask(){
-    var v=document.getElementById("taskInp").value.trim();
-    var cat2=document.getElementById("taskCatSel").value;
-    if(!v)return;
-    addTask(k,v,cat2);renderToday();toast("Task added ✓");
-  }
-
-  // Schedule toggle
-  document.getElementById("schedToggle").onclick=function(){
-    var sc2=document.getElementById("schedContent");
-    var arr=document.getElementById("schedArrow");
-    var hidden=sc2.style.display==="none";
-    sc2.style.display=hidden?"":"none";
-    arr.textContent=hidden?"▾":"▸";
-  };
-
-  // Add block
   document.getElementById("addBtn").onclick=function(){openModal(null,di);};
 }
 
@@ -1432,6 +1319,28 @@ function toast(msg){
 // ---- Init ----
 buildCatPick();
 render();
+
+// ---- PWA ----
+var _installPrompt=null;
+window.addEventListener("beforeinstallprompt",function(e){
+  e.preventDefault();_installPrompt=e;
+  document.getElementById("installBtn").style.display="";
+});
+document.getElementById("installBtn").onclick=function(){
+  if(!_installPrompt)return;
+  _installPrompt.prompt();
+  _installPrompt.userChoice.then(function(){
+    _installPrompt=null;
+    document.getElementById("installBtn").style.display="none";
+  });
+};
+window.addEventListener("appinstalled",function(){
+  document.getElementById("installBtn").style.display="none";
+  toast("Momentum installed ✓");
+});
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("./sw.js").catch(function(){});
+}
 })();
 </script>
 </body>
