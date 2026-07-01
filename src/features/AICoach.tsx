@@ -455,6 +455,9 @@ export default function AICoach() {
     const sc = scenarioRef.current
     if (!sc) return
 
+    // Mark coach practice as done for today (read by Dashboard goals)
+    localStorage.setItem('steady_coach_date', new Date().toISOString().slice(0, 10))
+
     const userTurnIndex = messagesRef.current.filter(m => m.role === 'user').length
     const withUser: Message[] = [...messagesRef.current, { role: 'user', content: text }]
     messagesRef.current = withUser
